@@ -1,0 +1,11 @@
+Model Information:
+* title:	Tardis WiP v2
+* source:	https://sketchfab.com/3d-models/tardis-wip-v2-7b13319cbee0480a80975f071e5c8482
+* author:	Drakahn Finlay (https://sketchfab.com/Drakahn.Finlay)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Tardis WiP v2" (https://sketchfab.com/3d-models/tardis-wip-v2-7b13319cbee0480a80975f071e5c8482) by Drakahn Finlay (https://sketchfab.com/Drakahn.Finlay) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
