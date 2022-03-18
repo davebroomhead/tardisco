@@ -34,7 +34,7 @@ window.scene = scene;
 // using perspective camera - first attribute field of view (degrees), second is aspect ratio, third/fourth is near and far clipping plane (content outside these frames won't be rendered)
 const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 5000 );
 
-// set camera position
+// set initial camera position
 camera.position.set(0,70,300)
 // camera.lookAt(new THREE.Vector3(0,0,0))
 
@@ -46,6 +46,8 @@ window.camera = camera;
 // note on performance: you can  For performance intensive apps, you can also give setSize smaller values, like window.innerWidth/2 and window.innerHeight/2, which will make the app render at quarter size. If you wish to keep the size of your app but render it at a lower resolution, you can do so by calling setSize with false as updateStyle (the third argument). For example, setSize(window.innerWidth/2, window.innerHeight/2, false) will render your app at half resolution, given that your <canvas> has 100% width and height.
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize( window.innerWidth, window.innerHeight );
+
+renderer.sortObjects = false;
 
 // add the renderer element to our HTML document. This is a <canvas> element the renderer uses to display the scene to us.
 document.body.appendChild( renderer.domElement );
@@ -75,6 +77,10 @@ function onMouseMove( event ) {
 
 function onMouseWheel( event ) {
   camera.position.z += event.deltaY * 0.1; // move camera along z-axis
+
+  if (camera.position.z < -1000){
+    camera.position.z = -1000;
+  }
 
   // contact us div drops down onto screen when user zooms out past 900
   const contactDiv = document.querySelector('.contact');
@@ -146,7 +152,7 @@ loader.load( 'satellite/satellite.gltf', function ( gltf ) {
 const fontLoader = new FontLoader();
 const textMat = new THREE.MeshStandardMaterial( { color: 0xC71E3D, roughness: 0, metalness: 0 } );
 
-fontLoader.load( './node_modules/three/examples/fonts/droid/droid_serif_bold.typeface.json', function ( font ) {
+fontLoader.load( 'droid_sans_bold.typeface.json', function ( font ) {
 
 	const textGeo = new TextGeometry( 'Tardisco', {
 		font: font,
@@ -163,39 +169,8 @@ fontLoader.load( './node_modules/three/examples/fonts/droid/droid_serif_bold.typ
   scene.add( textMesh);
 });
 
-// WORMHOLE
 
-var points = [];
-for (var i = 0; i < 10; i ++) {
-  points.push(new THREE.Vector3(Math.pow(i,5), 50, -1500 * i));
-}
-var curve = new THREE.CatmullRomCurve3(points)
-// (path: curve, tubularSegments, radius, radial Segments, closed: boolean)
-var tubeGeometry = new THREE.TubeGeometry(curve, 70, 200, 50, false);
 
-const wormholeMat = new THREE.MeshLambertMaterial({
-  color: 0xffffff,
-  map: new THREE.TextureLoader().load('nebula.jpeg'),
-  blending: THREE.NormalBlending,
-  side: THREE.BackSide,
-  transparent: true,
-  opacity: 0.1,
-  depthTest: true
-  // TODO: double sided
-});
-
-wormholeMat.map.wrapS = THREE.MirroredRepeatWrapping;
-wormholeMat.map.wrapT = THREE.MirroredRepeatWrapping;
-wormholeMat.map.repeat.set(111, 6);
-
-const wormhole = new THREE.Mesh( tubeGeometry, wormholeMat );
-wormhole.position.set(0,60,-300);
-scene.add( wormhole );
-app.wormhole = wormhole;
-
-window.wormhole = wormhole;
-
-const tween = new TWEEN.Tween(app.wormhole.position);
 
 
 // CELLESTIAL SYSTEM
@@ -239,6 +214,42 @@ function createParticleSystem() {
 const particleSystem = createParticleSystem();
 scene.add( particleSystem );
 
+
+// WORMHOLE
+
+var points = [];
+for (var i = 0; i < 10; i ++) {
+  points.push(new THREE.Vector3(Math.pow(i,5), 50, -1500 * i));
+}
+var curve = new THREE.CatmullRomCurve3(points);
+// (path: curve, tubularSegments, radius, radial Segments, closed: boolean)
+var tubeGeometry = new THREE.TubeGeometry(curve, 70, 200, 50, false);
+
+const wormholeMat = new THREE.MeshLambertMaterial({
+  color: 0xffffff,
+  map: new THREE.TextureLoader().load('nebula.jpeg'),
+  blending: THREE.NormalBlending,
+  side: THREE.BackSide,
+  transparent: true,
+  opacity: 0.1,
+  depthTest: true
+  // TODO: double sided
+});
+
+wormholeMat.map.wrapS = THREE.MirroredRepeatWrapping;
+wormholeMat.map.wrapT = THREE.MirroredRepeatWrapping;
+wormholeMat.map.repeat.set(111, 6);
+
+const wormhole = new THREE.Mesh( tubeGeometry, wormholeMat );
+wormhole.position.set(0,50,-300);
+scene.add( wormhole );
+app.wormhole = wormhole;
+
+window.wormhole = wormhole;
+
+const tween = new TWEEN.Tween(app.wormhole.position);
+
+
 // LIGHTS
 
 // add directional light
@@ -255,13 +266,13 @@ tardiscoTextRectLight.lookAt( -180, 400, -600 );
 scene.add( tardiscoTextRectLight );
 // scene.add( new RectAreaLightHelper( tardiscoTextRectLight ) );
 
-const greenTardisRectLight = new THREE.RectAreaLight( 0x11FF00, 4, 50, 50 );
+const greenTardisRectLight = new THREE.RectAreaLight( 0x92D9FE, 4, 50, 50 );
 greenTardisRectLight.position.set( 0, 100, 10);
 greenTardisRectLight.lookAt( 0, 0, 0 );
 scene.add( greenTardisRectLight );
 // scene.add( new RectAreaLightHelper( greenTardisRectLight ) );
 
-const wormholeStar = new THREE.PointLight( 0xB5F3FF, 2, 0, 2 );
+const wormholeStar = new THREE.PointLight( 0x66C9FF, 2, 0, 2 );
 wormholeStar.castShadow = false;
 // wormholeStar.intensity = 20;
 // wormholeStar.angle = 0.5;
@@ -375,7 +386,13 @@ function animate () {
   // app.tardis.rotation.x += 0.01;
   app.tardis.rotation.y += 0.025;
   app.satellite.rotation.y += 0.0003;
-  app.wormhole.rotation.z += 0.002;
+
+  if (camera.position.z < 200){
+    app.wormhole.rotation.z += THREE.Math.mapLinear( camera.position.z, 200, -200, 0.002, 0.009 ) // z
+    console.log(app.wormhole.rotation.z)
+  }else{
+    app.wormhole.rotation.z += 0.002;
+  }
 
   // Unless you need post-processing in linear colorspace, always configure WebGLRenderer as follows when using glTF
   renderer.outputEncoding = THREE.sRGBEncoding;
