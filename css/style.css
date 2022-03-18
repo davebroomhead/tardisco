@@ -1,0 +1,13 @@
+.contact {
+    position: absolute;
+    left: 15vw;
+    top: 20vw;
+	width: 70vw;
+    height: 50vw;
+    background-color: rgba(0,62,77,0.9);
+    border-radius: 40px;
+	text-align: center;
+	z-index: 100;
+	display:none;
+    color:white;
+}
