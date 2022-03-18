@@ -8,6 +8,7 @@ import { FontLoader } from './node_modules/three/examples/jsm/loaders/FontLoader
 import { TextGeometry } from './node_modules/three/examples/jsm/geometries/TextGeometry.js';
 import 'animate.css';
 import { Lensflare, LensflareElement } from './node_modules/three/examples/jsm/objects/Lensflare.js';
+import TWEEN from '@tweenjs/tween.js'
 
 // ? causing error 'require is not defined'
 // const TWEEN = require('@tweenjs/tween.js')
@@ -100,7 +101,7 @@ let normalVelocities = [];
 // IMPORT 3D MODELS
 
 // import tardis model
-loader.load( '/assets/TARDIS-2/TARDIS-2.gltf', function ( gltf ) {
+loader.load( '/public/TARDIS-2/TARDIS-2.gltf', function ( gltf ) {
   app.tardis = gltf.scene // .children[0];
   app.tardis.children[0].scale.set(0.5,0.5,0.5);
   // scene.add( app.tardis );
@@ -110,7 +111,7 @@ loader.load( '/assets/TARDIS-2/TARDIS-2.gltf', function ( gltf ) {
 } ); // end .load
 
 // import dalek model
-// loader.load( '/assets/DALEK/dalek.gltf', function ( gltf ) {
+// loader.load( '/public/DALEK/dalek.gltf', function ( gltf ) {
 //   const dalek = gltf.scene.children[0];
 //   dalek.scale.set(0.5,0.5,0.5);
 //   scene.add( gltf.scene );
@@ -119,7 +120,7 @@ loader.load( '/assets/TARDIS-2/TARDIS-2.gltf', function ( gltf ) {
 // } ); // end .load
 
 // import satellite
-loader.load( '/assets/satellite/satellite.gltf', function ( gltf ) {
+loader.load( '/public/satellite/satellite.gltf', function ( gltf ) {
   app.satellite = gltf.scene;
   app.satellite.children[0].scale.set(300,300,300);
   app.satellite.children[0].rotateX(180);
@@ -153,25 +154,49 @@ fontLoader.load( './node_modules/three/examples/fonts/droid/droid_serif_bold.typ
   scene.add( textMesh);
 });
 
-// wormhole cylinder
 
-const wormholeGeo = new THREE.CylinderGeometry( 100, 30, 600, 40, 40, true);
+// wormhole tube
+
+// QuadraticBezierCurve - turning into a straight line
+// const quadCurve = new THREE.QuadraticBezierCurve3(
+//   new THREE.Vector3(0, 0, 0), 
+//   new THREE.Vector3(0, 0, -50), 
+//   new THREE.Vector3(100, 0, -500)
+// )
+
+var points = [];
+for (var i = 0; i < 10; i ++) {
+  points.push(new THREE.Vector3(Math.pow(i,5), 50, -1500 * i));
+}
+var curve = new THREE.CatmullRomCurve3(points)
+// (path: curve, tubularSegments, radius, radial Segments, closed: boolean)
+var tubeGeometry = new THREE.TubeGeometry(curve, 70, 200, 50, false);
+
+
+// const wormholeGeo = new THREE.TubeGeometry(quadCurve, 12, 20, 8, false);
+
+
 const wormholeMat = new THREE.MeshLambertMaterial({
   color: 0xffffff,
-  map: new THREE.TextureLoader().load('assets/nebula.jpeg'),
-  blending: THREE.AdditiveBlending,
+  map: new THREE.TextureLoader().load('public/nebula.jpeg'),
+  blending: THREE.NormalBlending,
   side: THREE.BackSide,
   transparent: true,
-  opacity: 0.5,
+  opacity: 0.2,
   depthTest: true
   // TODO: double sided
 });
 
-const wormhole = new THREE.Mesh( wormholeGeo, wormholeMat );
-wormhole.position.set(0,50,-300);
-wormhole.rotation.x = Math.PI / 2;
+wormholeMat.map.wrapS = THREE.MirroredRepeatWrapping;
+wormholeMat.map.wrapT = THREE.MirroredRepeatWrapping;
+wormholeMat.map.repeat.set(111, 6);
+
+const wormhole = new THREE.Mesh( tubeGeometry, wormholeMat );
+wormhole.position.set(0,50,0);
 scene.add( wormhole );
 app.wormhole = wormhole;
+
+window.wormhole = wormhole;
 
 // const meshFloor = new THREE.Mesh(
 // 	new THREE.PlaneGeometry(116, 116, 1, 1),
@@ -211,7 +236,7 @@ function createParticleSystem() {
   const particleMaterial = new THREE.PointsMaterial({
     color: 0xFFFFFF,
     size: 6,
-    map: new THREE.TextureLoader().load('assets/star.png'),
+    map: new THREE.TextureLoader().load('public/star.png'),
     blending: THREE.AdditiveBlending, 
     transparent: true,
     alphaTest: 0.5
@@ -265,20 +290,20 @@ greenTardisRectLight.lookAt( 0, 0, 0 );
 scene.add( greenTardisRectLight );
 // scene.add( new RectAreaLightHelper( greenTardisRectLight ) );
 
-const wormholeStar = new THREE.PointLight( 0xFFFF00, 0.1, 0, 2 );
+const wormholeStar = new THREE.PointLight( 0xFFFFFF, 1, 0, 2 );
 wormholeStar.castShadow = false;
 // wormholeStar.intensity = 20;
 // wormholeStar.angle = 0.5;
 // wormholeStar.decay = 0;
-wormholeStar.position.set( 0, 0, -1000 );
+wormholeStar.position.set( 0, 50, -1000 );
 scene.add( wormholeStar );
 // const wormholeStarHelper = new THREE.PointLightHelper( wormholeStar )
 // scene.add (wormholeStarHelper)
 
 // insert lensflare here
 const textureLoader = new THREE.TextureLoader();
-const textureFlare0 = textureLoader.load( 'assets/lensflare0.png' );
-const textureFlare3 = textureLoader.load( 'assets/lensflare3.png' );
+const textureFlare0 = textureLoader.load( 'public/lensflare0.png' );
+const textureFlare3 = textureLoader.load( 'public/lensflare3.png' );
 
 console.log(textureFlare0);
 // textureFlare0.image.setSize(1000,1000,1);
@@ -388,7 +413,7 @@ function animate () {
     // app.tardis.rotation.x += 0.01;
     app.tardis.rotation.y += 0.025;
     app.satellite.rotation.y += 0.0003;
-    app.wormhole.rotation.y += 0.01;
+    app.wormhole.rotation.z += 0.002;
 
     // Unless you need post-processing in linear colorspace, always configure WebGLRenderer as follows when using glTF
     renderer.outputEncoding = THREE.sRGBEncoding;
