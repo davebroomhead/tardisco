@@ -101,7 +101,7 @@ let normalVelocities = [];
 // IMPORT 3D MODELS
 
 // import tardis model
-loader.load( '/public/TARDIS-2/TARDIS-2.gltf', function ( gltf ) {
+loader.load( 'TARDIS-2/TARDIS-2.gltf', function ( gltf ) {
   app.tardis = gltf.scene // .children[0];
   app.tardis.children[0].scale.set(0.5,0.5,0.5);
   // scene.add( app.tardis );
@@ -111,7 +111,7 @@ loader.load( '/public/TARDIS-2/TARDIS-2.gltf', function ( gltf ) {
 } ); // end .load
 
 // import dalek model
-// loader.load( '/public/DALEK/dalek.gltf', function ( gltf ) {
+// loader.load( 'DALEK/dalek.gltf', function ( gltf ) {
 //   const dalek = gltf.scene.children[0];
 //   dalek.scale.set(0.5,0.5,0.5);
 //   scene.add( gltf.scene );
@@ -120,7 +120,7 @@ loader.load( '/public/TARDIS-2/TARDIS-2.gltf', function ( gltf ) {
 // } ); // end .load
 
 // import satellite
-loader.load( '/public/satellite/satellite.gltf', function ( gltf ) {
+loader.load( 'satellite/satellite.gltf', function ( gltf ) {
   app.satellite = gltf.scene;
   app.satellite.children[0].scale.set(300,300,300);
   app.satellite.children[0].rotateX(180);
@@ -149,7 +149,7 @@ fontLoader.load( './node_modules/three/examples/fonts/droid/droid_serif_bold.typ
   textGeo.computeBoundingBox();
   const centerOffset = - 0.5 * ( textGeo.boundingBox.max.x - textGeo.boundingBox.min.x );
 
-  textMesh.position.set(centerOffset,450,-700);
+  textMesh.position.set(centerOffset,850,-700);
   textMesh.lookAt(centerOffset,100,200);
   scene.add( textMesh);
 });
@@ -178,7 +178,7 @@ var tubeGeometry = new THREE.TubeGeometry(curve, 70, 200, 50, false);
 
 const wormholeMat = new THREE.MeshLambertMaterial({
   color: 0xffffff,
-  map: new THREE.TextureLoader().load('public/nebula.jpeg'),
+  map: new THREE.TextureLoader().load('nebula.jpeg'),
   blending: THREE.NormalBlending,
   side: THREE.BackSide,
   transparent: true,
@@ -236,7 +236,7 @@ function createParticleSystem() {
   const particleMaterial = new THREE.PointsMaterial({
     color: 0xFFFFFF,
     size: 6,
-    map: new THREE.TextureLoader().load('public/star.png'),
+    map: new THREE.TextureLoader().load('star.png'),
     blending: THREE.AdditiveBlending, 
     transparent: true,
     alphaTest: 0.5
@@ -302,8 +302,8 @@ scene.add( wormholeStar );
 
 // insert lensflare here
 const textureLoader = new THREE.TextureLoader();
-const textureFlare0 = textureLoader.load( 'public/lensflare0.png' );
-const textureFlare3 = textureLoader.load( 'public/lensflare3.png' );
+const textureFlare0 = textureLoader.load( 'lensflare0.png' );
+const textureFlare3 = textureLoader.load( 'lensflare3.png' );
 
 console.log(textureFlare0);
 // textureFlare0.image.setSize(1000,1000,1);
