@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import WebGL from './js/WebGL.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
-import { RectAreaLightUniformsLib } from '../tardisco/node_modules/three/examples/jsm/lights/RectAreaLightUniformsLib';
+import { RectAreaLightUniformsLib } from './node_modules/three/examples/jsm/lights/RectAreaLightUniformsLib';
 import { RectAreaLightHelper } from '../tardisco/node_modules/three/examples/jsm/helpers/RectAreaLightHelper';
 import { FontLoader } from './node_modules/three/examples/jsm/loaders/FontLoader.js';
 import { TextGeometry } from './node_modules/three/examples/jsm/geometries/TextGeometry.js';
