@@ -67,6 +67,7 @@ function init(){
   RectAreaLightUniformsLib.init();
 }; // init()
 
+
 function onMouseMove( event ) {
 	mouse.x = ( event.clientX - windowHalf.x );
 	mouse.y = ( event.clientY - windowHalf.x );
@@ -83,6 +84,14 @@ function onMouseWheel( event ) {
   }else{
     contactDiv.classList.add('animate__fadeOutUpBig')
   } // if camera.position.z > 500
+
+  // if (camera.position.z < 150){
+  //   tween.to({z: -200}, 500);
+  //   tween.start();
+  // }else{
+  //   tween.to({z: -5000}, 500)
+  //   tween.start();
+  // }
 } // onMouseWheel()
 
 function onResize( event ) {
@@ -104,7 +113,7 @@ let normalVelocities = [];
 loader.load( 'TARDIS-2/TARDIS-2.gltf', function ( gltf ) {
   app.tardis = gltf.scene // .children[0];
   app.tardis.children[0].scale.set(0.5,0.5,0.5);
-  // scene.add( app.tardis );
+  scene.add( app.tardis );
   animate();
 }, undefined, function ( error ) {
   console.error( error );
@@ -149,20 +158,12 @@ fontLoader.load( './node_modules/three/examples/fonts/droid/droid_serif_bold.typ
   textGeo.computeBoundingBox();
   const centerOffset = - 0.5 * ( textGeo.boundingBox.max.x - textGeo.boundingBox.min.x );
 
-  textMesh.position.set(centerOffset,850,-700);
+  textMesh.position.set(centerOffset,650,-700);
   textMesh.lookAt(centerOffset,100,200);
   scene.add( textMesh);
 });
 
-
-// wormhole tube
-
-// QuadraticBezierCurve - turning into a straight line
-// const quadCurve = new THREE.QuadraticBezierCurve3(
-//   new THREE.Vector3(0, 0, 0), 
-//   new THREE.Vector3(0, 0, -50), 
-//   new THREE.Vector3(100, 0, -500)
-// )
+// WORMHOLE
 
 var points = [];
 for (var i = 0; i < 10; i ++) {
@@ -172,17 +173,13 @@ var curve = new THREE.CatmullRomCurve3(points)
 // (path: curve, tubularSegments, radius, radial Segments, closed: boolean)
 var tubeGeometry = new THREE.TubeGeometry(curve, 70, 200, 50, false);
 
-
-// const wormholeGeo = new THREE.TubeGeometry(quadCurve, 12, 20, 8, false);
-
-
 const wormholeMat = new THREE.MeshLambertMaterial({
   color: 0xffffff,
   map: new THREE.TextureLoader().load('nebula.jpeg'),
   blending: THREE.NormalBlending,
   side: THREE.BackSide,
   transparent: true,
-  opacity: 0.2,
+  opacity: 0.1,
   depthTest: true
   // TODO: double sided
 });
@@ -192,23 +189,14 @@ wormholeMat.map.wrapT = THREE.MirroredRepeatWrapping;
 wormholeMat.map.repeat.set(111, 6);
 
 const wormhole = new THREE.Mesh( tubeGeometry, wormholeMat );
-wormhole.position.set(0,50,0);
+wormhole.position.set(0,60,-300);
 scene.add( wormhole );
 app.wormhole = wormhole;
 
 window.wormhole = wormhole;
 
-// const meshFloor = new THREE.Mesh(
-// 	new THREE.PlaneGeometry(116, 116, 1, 1),
-// 	new THREE.MeshPhongMaterial({
-// 		color:0xFFFFFF,
-// 		shininess:10,
-// 		wireframe:false
-// 		})
-// );
-// meshFloor.receiveShadow = true;
-// scene.add(meshFloor);
-// meshFloor.position.set(0,0,0);
+const tween = new TWEEN.Tween(app.wormhole.position);
+
 
 // CELLESTIAL SYSTEM
 
@@ -251,24 +239,7 @@ function createParticleSystem() {
 const particleSystem = createParticleSystem();
 scene.add( particleSystem );
 
-// create cube with material, color
-// const geometry = new THREE.BoxGeometry();
-// const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
-// const cube = new THREE.Mesh( geometry, material );
-
-// cube added to scene at coordinates (0,0,0)
-// scene.add( cube );
-
 // LIGHTS
-
-// green hemisphere light
-
-// const hemisphereLight = new THREE.HemisphereLight( 0x605C7F, 0x261E1E, 0.1 );
-// scene.add( hemisphereLight );
-
-// add ambient lighting
-// const ambientLight = new THREE.AmbientLight( 0x404040 );
-// scene.add( ambientLight );
 
 // add directional light
 const directionalLight = new THREE.DirectionalLight( 0xffffff, 1 );
@@ -290,23 +261,21 @@ greenTardisRectLight.lookAt( 0, 0, 0 );
 scene.add( greenTardisRectLight );
 // scene.add( new RectAreaLightHelper( greenTardisRectLight ) );
 
-const wormholeStar = new THREE.PointLight( 0xFFFFFF, 1, 0, 2 );
+const wormholeStar = new THREE.PointLight( 0xB5F3FF, 2, 0, 2 );
 wormholeStar.castShadow = false;
 // wormholeStar.intensity = 20;
 // wormholeStar.angle = 0.5;
 // wormholeStar.decay = 0;
-wormholeStar.position.set( 0, 50, -1000 );
+wormholeStar.position.set( 0, 50, -1500 );
 scene.add( wormholeStar );
 // const wormholeStarHelper = new THREE.PointLightHelper( wormholeStar )
 // scene.add (wormholeStarHelper)
 
-// insert lensflare here
+// LENSFLARE
+
 const textureLoader = new THREE.TextureLoader();
 const textureFlare0 = textureLoader.load( 'lensflare0.png' );
 const textureFlare3 = textureLoader.load( 'lensflare3.png' );
-
-console.log(textureFlare0);
-// textureFlare0.image.setSize(1000,1000,1);
 
 const lensflare = new Lensflare();
 lensflare.addElement( new LensflareElement( textureFlare0, 400, 0, wormholeStar.color ) );
@@ -314,32 +283,6 @@ lensflare.addElement( new LensflareElement( textureFlare3, 60, 0.6 ) );
 lensflare.addElement( new LensflareElement( textureFlare3, 70, 0.7 ) );
 
 wormholeStar.add( lensflare );
-
-// var L1_core = new THREE.PointLight(0xFFFFFF, 2.0, 0, 2.0);
-// L1_core.castShadow = false;
-// scene.add(L1_core);
-// L1_core.position.set(-2.20, 0, 0.0050);
-
-// add spotlight
-// const spotLight = new THREE.SpotLight( 0xffffff );
-// spotLight.position.set(50,50,50);
-// spotLight.shadow.mapSize.width = 1024;
-// spotLight.shadow.mapSize.height = 1024;
-// scene.add( spotLight );
-
-// renders a sphere to visualize a light probe in the scene
-// const helper = new THREE.SpotLightHelper(spotLight);
-// scene.add( helper );
-
-// Use mouse to control camera 
-// const mouseControls = new OrbitControls(camera, renderer.domElement);
-// add event listener to mouseControls
-// mouseControls.addEventListener('change',() => {
-  // const distanceToOrigin = camera.position.distanceTo(scene.position);
-  // console.log("camera changed", distanceToOrigin);
-// });
-
-
 
 function animateParticles() {
 
@@ -390,6 +333,20 @@ function animateParticles() {
 
 }; // animateParticles()
 
+// TWEEN
+
+// const tween = new TWEEN.Tween(app.wormhole.position);
+
+// camera.addEventListener('change', (event) => {
+//   if (camera.position.z < 200){
+//     tween.to({z: -300}, 1000);
+//     tween.start();
+//   }else{
+//     tween.to({z: -5000}, 1000)
+//     tween.start();
+//   }
+// })
+
 
 
 // create a loop that causes the renderer to draw the scene every time the screen is refreshed (on a typical screen this means 60 times per second)
@@ -401,21 +358,26 @@ function animate () {
   
   camera.rotation.x += 0.005 * ( target.y - camera.rotation.x );
   camera.rotation.y += 0.005 * ( target.x - camera.rotation.y );
-
+  
   animateParticles();
   
   requestAnimationFrame(animate);
+  
+  TWEEN.update()
+  tween.onUpdate(function(){
+    console.log('tween updating');
+  })
     
-    // t stuck at 0
-    // var t = scrollY / (5000 - innerHeight);
-    // camera.position.z = 0.2 + 5 * t;
+  // t stuck at 0
+  // var t = scrollY / (5000 - innerHeight);
+  // camera.position.z = 0.2 + 5 * t;
 
-    // app.tardis.rotation.x += 0.01;
-    app.tardis.rotation.y += 0.025;
-    app.satellite.rotation.y += 0.0003;
-    app.wormhole.rotation.z += 0.002;
+  // app.tardis.rotation.x += 0.01;
+  app.tardis.rotation.y += 0.025;
+  app.satellite.rotation.y += 0.0003;
+  app.wormhole.rotation.z += 0.002;
 
-    // Unless you need post-processing in linear colorspace, always configure WebGLRenderer as follows when using glTF
-    renderer.outputEncoding = THREE.sRGBEncoding;
-    renderer.render( scene, camera );
+  // Unless you need post-processing in linear colorspace, always configure WebGLRenderer as follows when using glTF
+  renderer.outputEncoding = THREE.sRGBEncoding;
+  renderer.render( scene, camera );
 } // animate();
