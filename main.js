@@ -364,11 +364,11 @@ function animateParticles() {
 // requestAnimationFrame pauses when the user navigates to another browser tab, hence not wasting processing power and battery life
 function animate () {
   
-  target.x = ( 1 - mouse.x ) * 0.0015;
-  target.y = ( 1 - mouse.y ) * 0.0015;
+  target.x = ( 1 - mouse.x ) * 0.001;
+  target.y = ( 1 - mouse.y ) * 0.001;
   
-  camera.rotation.x += 0.005 * ( target.y - camera.rotation.x );
-  camera.rotation.y += 0.005 * ( target.x - camera.rotation.y );
+  camera.rotation.x += 0.05 * ( target.y - camera.rotation.x );
+  camera.rotation.y += 0.05 * ( target.x - camera.rotation.y );
   
   animateParticles();
   
