@@ -15,5 +15,17 @@
 p {
     font: arial;
     color: white;
+}
 
+#soundOn, #soundOff {
+    position: absolute;
+    right: 40px;
+    top: 16px;
+    width: 28px;
+    height: 28px;
+    cursor: pointer;
+}
+
+#soundOn {
+    display: none;
 }

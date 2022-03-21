@@ -21,8 +21,14 @@ if (!WebGL.isWebGLAvailable() ) {
   throw new Error('WebGL not available.')
 } // if WebGL available
 
-init();
+const audioContext = new AudioContext();
+let audioElement;
+let soundOn;
+let soundOff;
+
+document.addEventListener('DOMContentLoaded',init);
 const app = {};
+window.app = app;
 
 // SCENE
 
@@ -35,7 +41,7 @@ window.scene = scene;
 const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 5000 );
 
 // set initial camera position
-camera.position.set(0,70,190)
+camera.position.set(0,70,240)
 // camera.lookAt(new THREE.Vector3(0,0,0))
 
 window.camera = camera;
@@ -66,6 +72,19 @@ function init(){
   document.addEventListener( 'wheel', onMouseWheel, false );
   window.addEventListener( 'resize', onResize, false );
 
+  // music audio elements
+  audioElement = document.querySelector('audio');
+  const track = audioContext.createMediaElementSource(audioElement);
+  track.connect(audioContext.destination);
+
+  // get playButton
+  // const playButton = document.querySelector('#playPauseButton');
+  soundOn = document.querySelector('#soundOn');
+  soundOff = document.querySelector('#soundOff');
+  // playButton.addEventListener('click', onMusicClick);
+  soundOn.addEventListener('click', onMusicClick, false);
+  soundOff.addEventListener('click', onMusicClick, false);
+
   RectAreaLightUniformsLib.init();
 }; // init()
 
@@ -78,8 +97,11 @@ function onMouseWheel( event ) {
   // move camera along z-axis
   camera.position.z += event.deltaY * 0.1; 
 
-  if (camera.position.z < -1000){
-    camera.position.z = -1000;
+  if (camera.position.z < -600){
+    camera.position.z = -600;
+  }
+  if (camera.position.z > 1000){
+    camera.position.z = 1000;
   }
 
   // contact us div drops down onto screen when user zooms out past camera.z 900
@@ -89,7 +111,9 @@ function onMouseWheel( event ) {
     contactDiv.classList.remove('animate__fadeOutUpBig')
   }else{
     contactDiv.classList.add('animate__fadeOutUpBig')
-  } // if camera.position.z > 500
+  } 
+  
+  // if camera.position.z > 500
 
   // if (camera.position.z < 150){
   //   tween.to({z: -200}, 500);
@@ -110,6 +134,38 @@ function onResize( event ) {
 	camera.updateProjectionMatrix();
 	renderer.setSize( width, height );
 }
+
+function onMusicClick(){
+
+  console.log('onMusicClick');
+  console.log('this.dataset.playing = ',this.dataset.playing)
+
+  soundOn = document.querySelector('#soundOn');
+  soundOff = document.querySelector('#soundOff');
+
+  // check if context is in suspended state (autoplay policy)
+  if (audioContext.state === 'suspended') {
+    audioContext.resume();
+    soundOn.style.display = 'none';
+    soundOff.style.display = 'inline';
+    console.log('audio context was suspended, now resuming')
+  }
+
+  // play or pause track depending on state
+  if (this.dataset.playing === 'false') {
+    audioElement.play();
+    this.dataset.playing = 'true';
+    soundOff.style.display = 'none';
+    soundOn.style.display = 'inline';
+    console.log('audio playing was false, now playing')
+  } else if (this.dataset.playing === 'true') {
+    audioElement.pause();
+    this.dataset.playing = 'false';
+    soundOn.style.display = 'none';
+    soundOff.style.display = 'inline';
+    console.log('audio playing was true, now paused')
+  }
+} // onMusicClick()
 
 let normalVelocities = [];
 
@@ -147,6 +203,86 @@ loader.load( 'satellite/satellite.gltf', function ( gltf ) {
   console.error( error );
 } ); // end .load
 
+function createAstronauts(){
+
+  // astronaut array
+  const numAstronauts = 5;
+  const astronautsGeo = new THREE.BufferGeometry();
+  const positions = [];
+  const velocities = [];
+  const distrib = 200;
+
+  console.log(positions);
+
+  for( let i = 0; i < numAstronauts ; i++ ){
+    positions.push( 0, 50, 50 )
+        // THREE.Math.randInt(-distrib, distrib), // x
+        // THREE.Math.randInt(-distrib, distrib), // y
+        // THREE.Math.randInt(0, distrib), // z
+    // );
+    velocities.push(
+      1,
+      1,
+      1
+    );
+  }; // for loop
+
+  console.log(positions);
+
+  astronautsGeo.setAttribute('position', new THREE.Float32BufferAttribute( positions , 3) );
+  astronautsGeo.setAttribute('velocity', new THREE.Float32BufferAttribute( velocities , 3) );
+
+  // import astronaut
+  loader.load( 'astronaut/astronaut.gltf', function ( gltf ) {
+    const astronaut = gltf.scene;
+    astronaut.scale.set(20,20,20);
+    // scene.add( astronaut );
+    app.astronaut = astronaut;
+  }, undefined, function ( error ) {
+    console.error( error );
+  } ); // end .load
+
+  const astronautMesh = new THREE.InstancedMesh( astronautsGeo , app.astronaut, numAstronauts );
+
+  console.log('astronautMesh = ', astronautMesh);
+
+  return astronautMesh;
+}; // createAstronauts()
+
+const astronautSystem = createAstronauts();
+scene.add( astronautSystem );
+
+function animateAstronauts(){
+
+  // console.log('astronautSystem = ', astronautSystem.geometry);
+
+  const positions = astronautSystem.geometry.attributes.position.array;
+  const velocities = astronautSystem.geometry.attributes.velocity.array;
+  const astronauts = astronautSystem.geometry;
+  const numAstronauts = 5;
+
+
+  for( let i = 0; i < numAstronauts; i++ ){
+
+    const xIndex = i * 3 + 0; // x
+    const yIndex = i * 3 + 1; // y
+    const zIndex = i * 3 + 2; // z
+
+    // repopulate stars
+    // if( positions[zIndex] > particleDistribution ){
+    // // set z-position to -1000
+    //   positions[zIndex] = -particleDistribution;
+    // }
+
+    // Use the unique xyz velocity of each star to update its xyz position
+    positions[xIndex] += velocities[xIndex];
+    positions[yIndex] += velocities[yIndex];
+    positions[zIndex] += velocities[zIndex];
+  } // for loop
+
+} // animateAstronauts()
+
+
 // 3D TEXT HEADING 'TARDISCO'
 
 const fontLoader = new FontLoader();
@@ -164,7 +300,7 @@ fontLoader.load( 'droid_sans_bold.typeface.json', function ( font ) {
   textGeo.computeBoundingBox();
   const centerOffset = - 0.5 * ( textGeo.boundingBox.max.x - textGeo.boundingBox.min.x );
 
-  textMesh.position.set(centerOffset,500,-700);
+  textMesh.position.set(centerOffset,600,-700);
   textMesh.lookAt(centerOffset,100,200);
   scene.add( textMesh);
 });
@@ -214,7 +350,7 @@ scene.add( particleSystem );
 
 var points = [];
 for (var i = 0; i < 10; i ++) {
-  points.push(new THREE.Vector3(Math.pow(i,5), 50, -1500 * i));
+  points.push(new THREE.Vector3(Math.pow(i,5), 50, -2000 * i));
 }
 var curve = new THREE.CatmullRomCurve3(points);
 // (path: curve, tubularSegments, radius, radial Segments, closed: boolean)
@@ -236,13 +372,21 @@ wormholeMat.map.wrapT = THREE.MirroredRepeatWrapping;
 wormholeMat.map.repeat.set(111, 6);
 
 const wormhole = new THREE.Mesh( tubeGeometry, wormholeMat );
-wormhole.position.set(0,50,-300);
+wormhole.position.set(0,0,-300);
 scene.add( wormhole );
 app.wormhole = wormhole;
 
 window.wormhole = wormhole;
 
-const tween = new TWEEN.Tween(app.wormhole.position);
+const planetGeo = new THREE.SphereGeometry( 200, 32, 32 )
+const planetMat = new THREE.MeshNormalMaterial();
+const planet = new THREE.Mesh( planetGeo, planetMat );
+planet.position.set(-250,100,800)
+scene.add( planet );
+app.planet = planet;
+
+
+// const tween = new TWEEN.Tween(app.wormhole.position);
 
 // LIGHTS
 
@@ -271,7 +415,7 @@ wormholeStar.castShadow = false;
 // wormholeStar.intensity = 20;
 // wormholeStar.angle = 0.5;
 // wormholeStar.decay = 0;
-wormholeStar.position.set( 0, 50, -1500 );
+wormholeStar.position.set( 0, 50, -3000 );
 scene.add( wormholeStar );
 // const wormholeStarHelper = new THREE.PointLightHelper( wormholeStar )
 // scene.add (wormholeStarHelper)
@@ -296,10 +440,9 @@ function animateParticles() {
   const particles = particleSystem.geometry;
   const particleDistribution = 2000;
   const wormholeVelocities = []
-  
-  // console.log('in animateParticles(), velocities = ', velocities);
 
   // if the user zooms in closer than 200
+  // velocities are pushed into the velocity array using a loop
   if (camera.position.z < 200){
     for( let i = 0; i < 2000 ; i++ ){
       wormholeVelocities.push(
@@ -361,19 +504,19 @@ function animate () {
   target.x = ( 1 - mouse.x ) * 0.001;
   target.y = (( 1 - mouse.y ) * 0.001) + 0.2;
 
-  console.log(target.y);
-
   camera.rotation.x += 0.05 * ( target.y - camera.rotation.x );
   camera.rotation.y += 0.05 * ( target.x - camera.rotation.y );
   
   animateParticles();
+
+  animateAstronauts();
   
   requestAnimationFrame(animate);
   
-  TWEEN.update()
-  tween.onUpdate(function(){
-    console.log('tween updating');
-  })
+  // TWEEN.update()
+  // tween.onUpdate(function(){
+  //   console.log('tween updating');
+  // })
     
   // t stuck at 0
   // var t = scrollY / (5000 - innerHeight);
@@ -384,10 +527,16 @@ function animate () {
   app.satellite.rotation.y += 0.0003;
 
   if (camera.position.z < 200){
-    app.wormhole.rotation.z += THREE.Math.mapLinear( camera.position.z, 200, -200, 0.002, 0.009 ) // z
+    // map wormhole rotation based on camera.position.z
+    app.wormhole.rotation.z += THREE.Math.mapLinear( camera.position.z, 200, -200, 0.002, 0.009 )
+    // map wormhole position based on camera.position.z
+    app.wormhole.position.z = THREE.Math.mapLinear( camera.position.z, 200, -200, -300, 300 ) 
   }else{
     app.wormhole.rotation.z += 0.002;
   }
+
+  // map planet to camera.position.z
+  app.planet.position.x = THREE.Math.mapLinear( camera.position.z, 800, 1100, -350, -50 ) 
 
   // Unless you need post-processing in linear colorspace, always configure WebGLRenderer as follows when using glTF
   renderer.outputEncoding = THREE.sRGBEncoding;

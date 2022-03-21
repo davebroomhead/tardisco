@@ -21,12 +21,18 @@
     </style>
   </head>
   <body>
+
     <audio
       src="discoMusic.mp3"
-      loop
-      autoplay
-      controls>
+      loop      >
     </audio>
+
+    <!-- <button id="playPauseButton" data-playing="false" role="switch" aria-checked="false"> -->
+      <img src="soundOff.png" class="volume" id="soundOff" data-playing="false" role="switch" aria-checked="false">
+      <img src="soundOn.png" class="volume" id="soundOn" data-playing="false" role="switch" aria-checked="false">
+    <!-- Play / pause -->
+    <!-- </button> -->
+  
     <div id="app"></div>
     <div class="contact animate__animated animate__fadeInDownBig">
       <h1>About</h1>
