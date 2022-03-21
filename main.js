@@ -35,7 +35,7 @@ window.scene = scene;
 const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 5000 );
 
 // set initial camera position
-camera.position.set(0,70,300)
+camera.position.set(0,70,190)
 // camera.lookAt(new THREE.Vector3(0,0,0))
 
 window.camera = camera;
@@ -164,7 +164,7 @@ fontLoader.load( 'droid_sans_bold.typeface.json', function ( font ) {
   textGeo.computeBoundingBox();
   const centerOffset = - 0.5 * ( textGeo.boundingBox.max.x - textGeo.boundingBox.min.x );
 
-  textMesh.position.set(centerOffset,650,-700);
+  textMesh.position.set(centerOffset,500,-700);
   textMesh.lookAt(centerOffset,100,200);
   scene.add( textMesh);
 });
@@ -365,7 +365,9 @@ function animateParticles() {
 function animate () {
   
   target.x = ( 1 - mouse.x ) * 0.001;
-  target.y = ( 1 - mouse.y ) * 0.001;
+  target.y = (( 1 - mouse.y ) * 0.001) - 0.5;
+
+  console.log('target.y = ', target.y);
   
   camera.rotation.x += 0.05 * ( target.y - camera.rotation.x );
   camera.rotation.y += 0.05 * ( target.x - camera.rotation.y );
@@ -389,7 +391,6 @@ function animate () {
 
   if (camera.position.z < 200){
     app.wormhole.rotation.z += THREE.Math.mapLinear( camera.position.z, 200, -200, 0.002, 0.009 ) // z
-    console.log(app.wormhole.rotation.z)
   }else{
     app.wormhole.rotation.z += 0.002;
   }
