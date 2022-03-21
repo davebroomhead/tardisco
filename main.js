@@ -212,8 +212,6 @@ function createAstronauts(){
   const velocities = [];
   const distrib = 200;
 
-  console.log(positions);
-
   for( let i = 0; i < numAstronauts ; i++ ){
     positions.push( 0, 50, 50 )
         // THREE.Math.randInt(-distrib, distrib), // x
@@ -227,11 +225,6 @@ function createAstronauts(){
     );
   }; // for loop
 
-  console.log(positions);
-
-  astronautsGeo.setAttribute('position', new THREE.Float32BufferAttribute( positions , 3) );
-  astronautsGeo.setAttribute('velocity', new THREE.Float32BufferAttribute( velocities , 3) );
-
   // import astronaut
   loader.load( 'astronaut/astronaut.gltf', function ( gltf ) {
     const astronaut = gltf.scene;
@@ -241,7 +234,10 @@ function createAstronauts(){
   }, undefined, function ( error ) {
     console.error( error );
   } ); // end .load
-
+  
+  astronautsGeo.setAttribute('position', new THREE.Float32BufferAttribute( positions , 3) );
+  astronautsGeo.setAttribute('velocity', new THREE.Float32BufferAttribute( velocities , 3) );
+  
   const astronautMesh = new THREE.InstancedMesh( astronautsGeo , app.astronaut, numAstronauts );
 
   console.log('astronautMesh = ', astronautMesh);

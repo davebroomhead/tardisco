@@ -1,20 +1,28 @@
 .contact {
     position: absolute;
-    left: 15vw;
-    top: 20vw;
-	width: 70vw;
-    height: 50vw;
+    left: 8vw;
+    top: 8vw;
+	width: 80vw;
     background-color: rgba(0,62,77,0.9);
     border-radius: 40px;
 	text-align: center;
 	z-index: 100;
 	display:none;
     color:white;
+    padding: 30px;
+}
+
+h5 {
+    font-family: arial;
+    font-size: 16px;
+    line-height: 20px;
 }
 
 p {
-    font: arial;
+    font-family: arial;
     color: white;
+    font-size: 14px;
+    line-height: 20px;
 }
 
 #soundOn, #soundOff {
