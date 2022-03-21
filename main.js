@@ -69,20 +69,20 @@ function init(){
   RectAreaLightUniformsLib.init();
 }; // init()
 
-
 function onMouseMove( event ) {
 	mouse.x = ( event.clientX - windowHalf.x );
-	mouse.y = ( event.clientY - windowHalf.x );
+	mouse.y = ( event.clientY - windowHalf.y );
 }
 
 function onMouseWheel( event ) {
-  camera.position.z += event.deltaY * 0.1; // move camera along z-axis
+  // move camera along z-axis
+  camera.position.z += event.deltaY * 0.1; 
 
   if (camera.position.z < -1000){
     camera.position.z = -1000;
   }
 
-  // contact us div drops down onto screen when user zooms out past 900
+  // contact us div drops down onto screen when user zooms out past camera.z 900
   const contactDiv = document.querySelector('.contact');
   if(camera.position.z > 900){
     contactDiv.style.display = 'block';
@@ -169,10 +169,6 @@ fontLoader.load( 'droid_sans_bold.typeface.json', function ( font ) {
   scene.add( textMesh);
 });
 
-
-
-
-
 // CELLESTIAL SYSTEM
 
 function createParticleSystem() {
@@ -214,7 +210,6 @@ function createParticleSystem() {
 const particleSystem = createParticleSystem();
 scene.add( particleSystem );
 
-
 // WORMHOLE
 
 var points = [];
@@ -248,7 +243,6 @@ app.wormhole = wormhole;
 window.wormhole = wormhole;
 
 const tween = new TWEEN.Tween(app.wormhole.position);
-
 
 // LIGHTS
 
@@ -365,10 +359,10 @@ function animateParticles() {
 function animate () {
   
   target.x = ( 1 - mouse.x ) * 0.001;
-  target.y = (( 1 - mouse.y ) * 0.001) - 0.5;
+  target.y = (( 1 - mouse.y ) * 0.001) + 0.2;
 
-  console.log('target.y = ', target.y);
-  
+  console.log(target.y);
+
   camera.rotation.x += 0.05 * ( target.y - camera.rotation.x );
   camera.rotation.y += 0.05 * ( target.x - camera.rotation.y );
   
