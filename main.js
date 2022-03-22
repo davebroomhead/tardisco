@@ -77,11 +77,10 @@ function init(){
   const track = audioContext.createMediaElementSource(audioElement);
   track.connect(audioContext.destination);
 
-  // get playButton
-  // const playButton = document.querySelector('#playPauseButton');
   soundOn = document.querySelector('#soundOn');
   soundOff = document.querySelector('#soundOff');
-  // playButton.addEventListener('click', onMusicClick);
+
+  // connect music button to onMusicClick()
   soundOn.addEventListener('click', onMusicClick, false);
   soundOff.addEventListener('click', onMusicClick, false);
 
@@ -137,8 +136,8 @@ function onResize( event ) {
 
 function onMusicClick(){
 
-  console.log('onMusicClick');
-  console.log('this.dataset.playing = ',this.dataset.playing)
+  // console.log('onMusicClick');
+  // console.log('this.dataset.playing = ',this.dataset.playing)
 
   soundOn = document.querySelector('#soundOn');
   soundOff = document.querySelector('#soundOff');
@@ -148,7 +147,7 @@ function onMusicClick(){
     audioContext.resume();
     soundOn.style.display = 'none';
     soundOff.style.display = 'inline';
-    console.log('audio context was suspended, now resuming')
+    // console.log('audio context was suspended, now resuming')
   }
 
   // play or pause track depending on state
@@ -157,13 +156,13 @@ function onMusicClick(){
     this.dataset.playing = 'true';
     soundOff.style.display = 'none';
     soundOn.style.display = 'inline';
-    console.log('audio playing was false, now playing')
+    // console.log('audio playing was false, now playing')
   } else if (this.dataset.playing === 'true') {
     audioElement.pause();
     this.dataset.playing = 'false';
     soundOn.style.display = 'none';
     soundOff.style.display = 'inline';
-    console.log('audio playing was true, now paused')
+    // console.log('audio playing was true, now paused')
   }
 } // onMusicClick()
 
@@ -245,8 +244,8 @@ function createAstronauts(){
   return astronautMesh;
 }; // createAstronauts()
 
-const astronautSystem = createAstronauts();
-scene.add( astronautSystem );
+// const astronautSystem = createAstronauts();
+// scene.add( astronautSystem );
 
 function animateAstronauts(){
 
@@ -400,7 +399,7 @@ tardiscoTextRectLight.lookAt( -180, 400, -600 );
 scene.add( tardiscoTextRectLight );
 // scene.add( new RectAreaLightHelper( tardiscoTextRectLight ) );
 
-const greenTardisRectLight = new THREE.RectAreaLight( 0x92D9FE, 4, 50, 50 );
+const greenTardisRectLight = new THREE.RectAreaLight( 0x16DB00, 10, 50, 50 );
 greenTardisRectLight.position.set( 0, 100, 10);
 greenTardisRectLight.lookAt( 0, 0, 0 );
 scene.add( greenTardisRectLight );
@@ -505,7 +504,7 @@ function animate () {
   
   animateParticles();
 
-  animateAstronauts();
+  // animateAstronauts();
   
   requestAnimationFrame(animate);
   
