@@ -1,7 +1,7 @@
 .contact {
     position: absolute;
     left: 8vw;
-    top: 8vw;
+    top: 5vw;
 	width: 80vw;
     background-color: rgba(0,62,77,0.9);
     border-radius: 40px;
@@ -10,12 +10,13 @@
 	display:none;
     color:white;
     padding: 30px;
+    overflow: auto;
 }
 
 h5 {
     font-family: arial;
     font-size: 16px;
-    line-height: 20px;
+    line-height: 8px;
 }
 
 p {
